@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: "../.env" });
 
-import { Card } from "./Cards.js";
-import { sequelize } from "../config/db.js";
+import { Card } from "./models/Cards.js";
+import { sequelize } from "../server/config/db.js";
 
 const seedCards = async () => {
   try {
@@ -35,10 +35,10 @@ const seedCards = async () => {
       { rank: "A", suit: "spades", points: 11 },
     ];
 
-    await Card.bulkCreate(cardsData); // įdedam į DB
+    await Card.bulkCreate(cardsData);
 
     console.log("✅ Kortos sėkmingai sukurtos!");
-    process.exit(); // uždarom procesą
+    process.exit();
   } catch (error) {
     console.error("❌ Klaida sukuriant kortas:", error);
     process.exit(1);
