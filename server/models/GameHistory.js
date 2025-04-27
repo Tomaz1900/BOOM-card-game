@@ -6,12 +6,33 @@ export const GameHistory = sequelize.define("GameHistory", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  event: {
+
+  game_player_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  nickname: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  value: {
-    type: DataTypes.STRING,
+
+  action_type: {
+    type: DataTypes.ENUM(
+      "dark_turn",
+      "check",
+      "open_turn",
+      "take_a_look",
+      "open_against",
+      "fold",
+      "show_hand",
+      "boom_500",
+      "lost_boom_250",
+      "no_check"
+    ),
+    allowNull: false,
+  },
+  amount: {
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
   timestamp: {

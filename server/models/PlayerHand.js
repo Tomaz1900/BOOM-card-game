@@ -20,6 +20,6 @@ export const PlayerHand = sequelize.define("PlayerHand", {
   },
   points: {
     type: DataTypes.INTEGER,
-    allowNull: true, // leidžiam pradžioje palikti tuščią
+    allowNull: true,
   },
 });
