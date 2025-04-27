@@ -2,25 +2,26 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
 export const GamePlayer = sequelize.define("GamePlayer", {
+  game_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   seat: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  is_owner: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
-  is_active: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true,
-  },
-  is_folded: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
-  balance: {
+  chips: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 0,
+    defaultValue: 1000,
+  },
+  status: {
+    type: DataTypes.ENUM("waiting", "playing", "folded", "out"),
+    allowNull: false,
+    defaultValue: "waiting",
   },
 });
