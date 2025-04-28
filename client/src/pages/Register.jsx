@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
 const schema = z
   .object({
     username: z.string().min(3, "Mažiausiai 3 simboliai"),

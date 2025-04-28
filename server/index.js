@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
-import { sequelize } from "./models/User.js";
+import { sequelize } from "./config/db.js";
 
 dotenv.config();
 const app = express();
