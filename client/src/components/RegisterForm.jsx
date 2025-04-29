@@ -118,6 +118,17 @@ export default function RegisterForm() {
         >
           Registruotis
         </button>
+        <div className="text-center mt-4">
+          <p className="text-sm">
+            Jau turi paskyrą?{" "}
+            <button
+              onClick={() => navigate("/login")}
+              className="text-blue-600 hover:underline font-semibold"
+            >
+              Prisijungti
+            </button>
+          </p>
+        </div>
       </form>
     </div>
   );

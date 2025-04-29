@@ -5,8 +5,7 @@ export default function GameLobby() {
 
   function handleSeatSelection(seatNumber) {
     console.log("Pasirinkta vieta:", seatNumber);
-
-    alert(`Pasirinkai vietą: ${seatNumber}`);
+    navigate("/waiting");
   }
 
   return (
