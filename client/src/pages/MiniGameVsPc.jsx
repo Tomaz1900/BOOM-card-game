@@ -1,33 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const cards = [
-  "9h",
-  "9d",
-  "9s",
-  "9c",
-  "10h",
-  "10d",
-  "10s",
-  "10c",
-  "Jh",
-  "Jd",
-  "Js",
-  "Jc",
-  "Qh",
-  "Qd",
-  "Qs",
-  "Qc",
-  "Kh",
-  "Kd",
-  "Ks",
-  "Kc",
-  "Ah",
-  "Ad",
-  "As",
-  "Ac",
-];
-
+// Helper funkcija skaičiuoti taškus
 const cardPoints = {
   9: 9,
   10: 10,
@@ -38,105 +12,171 @@ const cardPoints = {
 };
 
 function calculatePoints(card1, card2, card3) {
-  const rank1 = card1.slice(0, -1);
-  const rank2 = card2.slice(0, -1);
-  const rank3 = card3.slice(0, -1);
-  const suit1 = card1.slice(-1);
-  const suit2 = card2.slice(-1);
-  const suit3 = card3.slice(-1);
+  const rank = (card) => card.slice(0, -1);
+  const suit = (card) => card.slice(-1);
 
-  if (rank1 === rank2 && rank2 === rank3) {
-    switch (rank1) {
-      case "9":
-        return 31;
-      case "10":
-        return 32;
-      case "J":
-        return 33;
-      case "Q":
-        return 34;
-      case "K":
-        return 35;
-      case "A":
-        return 36;
-      default:
-        return 0;
-    }
+  const ranks = [rank(card1), rank(card2), rank(card3)];
+  const suits = [suit(card1), suit(card2), suit(card3)];
+
+  if (ranks[0] === ranks[1] && ranks[1] === ranks[2]) {
+    return {
+      9: 31,
+      10: 32,
+      J: 33,
+      Q: 34,
+      K: 35,
+      A: 36,
+    }[ranks[0]];
   }
 
-  if (suit1 === suit2 && suit2 === suit3) {
-    return cardPoints[rank1] + cardPoints[rank2] + cardPoints[rank3];
+  if (suits[0] === suits[1] && suits[1] === suits[2]) {
+    return ranks.reduce((sum, r) => sum + cardPoints[r], 0);
   }
 
-  if (suit1 === suit2) return cardPoints[rank1] + cardPoints[rank2];
-  if (suit1 === suit3) return cardPoints[rank1] + cardPoints[rank3];
-  if (suit2 === suit3) return cardPoints[rank2] + cardPoints[rank3];
+  if (suits[0] === suits[1]) return cardPoints[ranks[0]] + cardPoints[ranks[1]];
+  if (suits[0] === suits[2]) return cardPoints[ranks[0]] + cardPoints[ranks[2]];
+  if (suits[1] === suits[2]) return cardPoints[ranks[1]] + cardPoints[ranks[2]];
 
-  return Math.max(cardPoints[rank1], cardPoints[rank2], cardPoints[rank3]);
+  return Math.max(...ranks.map((r) => cardPoints[r]));
+}
+
+// Generuoja atsitiktines kortas
+function drawCards(deck, n) {
+  const cards = [];
+  while (cards.length < n) {
+    const rand = deck[Math.floor(Math.random() * deck.length)];
+    if (!cards.includes(rand)) cards.push(rand);
+  }
+  return cards;
+}
+
+// Konvertuoja kortos kodą į paveikslėlio kelią
+function cardToImage(cardCode) {
+  let rank = "";
+  let suitLetter = "";
+
+  if (cardCode.startsWith("10")) {
+    rank = "10";
+    suitLetter = cardCode[2];
+  } else {
+    rank = cardCode[0];
+    suitLetter = cardCode[1];
+  }
+
+  const suit = {
+    s: "spades",
+    d: "diamonds",
+    c: "clubs",
+    h: "hearts",
+  }[suitLetter];
+
+  const rankName = {
+    9: "9",
+    10: "10",
+    J: "jack",
+    Q: "queen",
+    K: "king",
+    A: "ace",
+  }[rank];
+
+  return `/src/assets/Playing Cards/PNG-cards-1.3/${rankName}_of_${suit}.png`;
 }
 
 export default function MiniGameVsPC() {
   const navigate = useNavigate();
+  const deck = [
+    "9s",
+    "9d",
+    "9h",
+    "9c",
+    "10s",
+    "10d",
+    "10h",
+    "10c",
+    "Js",
+    "Jd",
+    "Jh",
+    "Jc",
+    "Qs",
+    "Qd",
+    "Qh",
+    "Qc",
+    "Ks",
+    "Kd",
+    "Kh",
+    "Kc",
+    "As",
+    "Ad",
+    "Ah",
+    "Ac",
+  ];
+
   const [playerCards, setPlayerCards] = useState([]);
-  const [pcCards, setPcCards] = useState([]);
-  const [result, setResult] = useState("");
+  const [computerCards, setComputerCards] = useState([]);
+  const [playerPoints, setPlayerPoints] = useState(0);
+  const [computerPoints, setComputerPoints] = useState(0);
+  const [winner, setWinner] = useState("");
+
+  function playGame() {
+    const all = drawCards(deck, 6);
+    const player = all.slice(0, 3);
+    const comp = all.slice(3, 6);
+
+    const pPoints = calculatePoints(...player);
+    const cPoints = calculatePoints(...comp);
+
+    setPlayerCards(player);
+    setComputerCards(comp);
+    setPlayerPoints(pPoints);
+    setComputerPoints(cPoints);
+
+    if (pPoints > cPoints) setWinner("🎉 Laimėjai!");
+    else if (pPoints < cPoints) setWinner("😔 Kompiuteris laimėjo...");
+    else setWinner("🤝 Lygiosios!");
+  }
 
   useEffect(() => {
-    const shuffled = [...cards].sort(() => Math.random() - 0.5);
-    const playerHand = shuffled.slice(0, 3);
-    const pcHand = shuffled.slice(3, 6);
-
-    setPlayerCards(playerHand);
-    setPcCards(pcHand);
-
-    const playerPoints = calculatePoints(...playerHand);
-    const pcPoints = calculatePoints(...pcHand);
-
-    if (playerPoints > pcPoints) {
-      setResult("🏆 Tu laimėjai!");
-    } else if (playerPoints < pcPoints) {
-      setResult("😔 Kompiuteris laimėjo...");
-    } else {
-      setResult("🤝 Lygiosios!");
-    }
+    playGame();
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl text-center">
-        <h1 className="text-3xl font-bold mb-6">
-          Žaidimas prieš Kompiuterį 🤖
-        </h1>
+    <div className="text-center mt-10 font-bold">
+      <h2 className="text-xl font-bold mb-4">Žaidimas prieš Kompiuterį 🖥️</h2>
 
-        <div className="grid grid-cols-2 gap-8 mb-6">
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Tavo kortos:</h2>
-            <div className="flex justify-center gap-4">
-              {playerCards.map((card, idx) => (
-                <div key={idx} className="border p-4 rounded-lg">
-                  {card}
-                </div>
-              ))}
-            </div>
+      <div className="flex justify-center gap-12 mb-6">
+        <div>
+          <p className="mb-2">Tavo kortos:</p>
+          <div className="flex gap-2 justify-center">
+            {playerCards.map((card) => (
+              <img key={card} src={cardToImage(card)} className="w-16" />
+            ))}
           </div>
-
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Kompiuterio kortos:</h2>
-            <div className="flex justify-center gap-4">
-              {pcCards.map((card, idx) => (
-                <div key={idx} className="border p-4 rounded-lg">
-                  {card}
-                </div>
-              ))}
-            </div>
-          </div>
+          <p className="mt-2">Tavo taškai: {playerPoints}</p>
         </div>
 
-        <h2 className="text-2xl font-bold mb-4">{result}</h2>
+        <div>
+          <p className="mb-2">Kompiuterio kortos:</p>
+          <div className="flex gap-2 justify-center">
+            {computerCards.map((card) => (
+              <img key={card} src={cardToImage(card)} className="w-16" />
+            ))}
+          </div>
+          <p className="mt-2">Kompiuterio taškai: {computerPoints}</p>
+        </div>
+      </div>
 
+      <h3 className="text-lg mb-6">{winner}</h3>
+
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={playGame}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+        >
+          Žaisti dar kartą
+        </button>
         <button
           onClick={() => navigate("/lobby")}
-          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300"
+          className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg"
         >
           Grįžti į Lobby
         </button>

@@ -5,7 +5,7 @@ import GameLobby from "./pages/GameLobby";
 import WaitingRoom from "./pages/WaitingRoom";
 import LoginPage from "./pages/LoginPage";
 import SinglePlayer from "./pages/SinglePlayer";
-import MiniGameVsPC from "./pages/MiniGameVsPc";
+import MiniGameVsPc from "./pages/MiniGameVsPc";
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
         <Route path="/waiting" element={<WaitingRoom />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/singleplayer" element={<SinglePlayer />} />
-        <Route path="/play-vs-pc" element={<MiniGameVsPC />} />
+        <Route path="/play-vs-pc" element={<MiniGameVsPc />} />
       </Routes>
     </Router>
   );
