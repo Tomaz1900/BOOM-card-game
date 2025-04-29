@@ -22,7 +22,11 @@ export default function LoginPage() {
         }),
       });
 
+      console.log("Atsakymo statusas:", response.status);
+
       if (response.ok) {
+        const responseData = await response.json();
+        localStorage.setItem("user", JSON.stringify(responseData.user));
         navigate("/lobby");
       } else {
         const errorData = await response.json();
